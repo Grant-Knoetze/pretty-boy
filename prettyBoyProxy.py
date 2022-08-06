@@ -1,6 +1,11 @@
+import cryptography
 import sys
 import socket
+import ssl
 import threading
+
+from cryptography import fernet
+from cryptography.fernet import Fernet
 
 HEX_FILTER = "".join([(len(repr(chr(i))) == 3) and chr(i) or "." for i in range(256)])
 
@@ -70,8 +75,15 @@ def recieve_from(connection):
 # passing in admin instead of your own username
 
 
-def request_handler(buffer):
-    """Perform packet modifications"""
+def request_handler(buffer, fernet=None, encMessage=None):
+    """Encrypt buffer with fernet"""
+    message = buffer
+    key = fernet.generate_key()
+    fernet = Fernet(key)
+    print("original string: ", message)
+    print("encrypted string: ", encMessage)
+    decMessage = fernet.decrypt(encMessage).decode()
+    print("decrypted string: ", decMessage)
     return buffer
 
 
