@@ -1,7 +1,8 @@
 import cryptography
-import sys
+import signal
 import socket
 import ssl
+import sys
 import threading
 
 from cryptography import fernet
@@ -172,6 +173,8 @@ def main():
     line arguments and
     start up the server loop that
     listens for connections"""
+    # Shutdown on CTL C
+    signal.signal(signal.SIGINT)
     if len(sys.argv[1:]) != 5:
         print("Usage: ./proxy.py [localhost] [localport]", end="")
         print("[remotehost] [remoteport] [receive_first]")
