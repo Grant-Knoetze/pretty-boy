@@ -176,14 +176,9 @@ def server_loop(local_host, local_port, remote_host, remote_port, receive_first)
 # Signal handler
 
 def signal_handler(sig, frame):
-    print("You pressed CTl+C!")
-    sys.exit(0)
-
-
-signal.signal(signal.SIGINT, signal_handler)
-print("Press Ctrl+C")
-signal.pause()
-
+    """Handles keyboard interrupt, when Ctl+c is pressed,
+    signal to terminate."""
+    signal.signal(signal.SIGINT, signal_handler)
 
 
 def main():
