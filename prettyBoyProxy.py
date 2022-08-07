@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+# from logging import shutdown
+
 import cryptography
 import signal
 import socket
@@ -10,6 +14,7 @@ from cryptography.fernet import Fernet
 
 HEX_FILTER = "".join([(len(repr(chr(i))) == 3) and chr(i) or "." for i in range(256)])
 
+
 # This function provides us with a way to watch the communication
 # going through a proxy in real time
 
@@ -20,7 +25,7 @@ def hexdump(src, length=16, show=True):
 
     results = list()
     for i in range(0, len(src), length):
-        word = str(src[i : i + length])
+        word = str(src[i: i + length])
 
         printable = word.translate(HEX_FILTER)
         hexa = " ".join([f"{ord(c):02X}" for c in word])
@@ -168,13 +173,24 @@ def server_loop(local_host, local_port, remote_host, remote_port, receive_first)
         proxy_thread.start()
 
 
+# Signal handler
+
+def signal_handler(sig, frame):
+    print("You pressed CTl+C!")
+    sys.exit(0)
+
+
+signal.signal(signal.SIGINT, signal_handler)
+print("Press Ctrl+C")
+signal.pause()
+
+
+
 def main():
     """We take in some command
     line arguments and
     start up the server loop that
     listens for connections"""
-    # Shutdown on CTL C
-    signal.signal(signal.SIGINT)
     if len(sys.argv[1:]) != 5:
         print("Usage: ./proxy.py [localhost] [localport]", end="")
         print("[remotehost] [remoteport] [receive_first]")
