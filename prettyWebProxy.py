@@ -38,4 +38,36 @@ class Server:
         first_line = request.split('\n')[0]
         # Get URl
         url = first_line.split(' ')[1]
+        # Find the destination address of the request
+        # We will be recieving data from this address
+        http_pos = url.find("://") # Find position of ://
+        if (http_pos==-1):
+            temp =url
+        else:
+            temp = url[(http_pos+3):] # Get the rest of the URL
+
+        port_pos = temp.find(":") # Find the port pos
+
+        # Find end of web server
+        webserver_pos = temp.find("/")
+        if webserver_pos == -1:
+            webserver_pos = len(temp)
+
+        webserver = ""
+        port = -1
+        if (port_pos==-1 or webserver_pos < port_pos):
+            # Default port
+            port = 80
+            webserver = temp[:webserver_pos]
+        else: # Specific port
+            port = int((temp[(port_pos + 1):])[:webserver_pos-port_pos-1])
+            webserver = temp[:port_pos]
+
+            # Now set up a connection to the destination server (or remote server)
+            # Send a copy of the original request to the server
+            # Receive server response
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(config['CONNECTION_TIMEOUT'])
+            s.connect((webserver, port))
+            s.sendall(request)
 
